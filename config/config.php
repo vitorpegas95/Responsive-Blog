@@ -19,16 +19,12 @@ ob_start();
 	$DB_HOST = "localhost";	//Host
 	$DB_USER = "root";		//Username
 	$DB_PASS = "";			//Password
-	$DB_NAME = "bsblog";		//DB Name
+	$DB_NAME = "DATABASE_NAMECHECK";		//DB Name
 	
-	
-	/*
-	$DB_HOST = "localhost";	//Host
-	$DB_USER = "";		//Username
-	$DB_PASS = "";			//Password
-	$DB_NAME = "";		//DB Name
-	*/
-	
+	if (strpos($DB_NAME, "DATABASE_NAME") !== FALSE)
+		echo '<meta HTTP-EQUIV="REFRESH" content="0; url=install.php">';
+
+		
 	$db = new Database($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);		//$db will be our database connection.
 	$config = $db->LoadData("SELECT * FROM `config`");
 	
@@ -43,6 +39,7 @@ ob_start();
 	
 	//include Global Functions
 	include_once "functions.php";
+	
 	
 	if(isset($_GET["page"]))
 	{

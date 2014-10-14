@@ -91,66 +91,69 @@
 				$query = "SELECT * FROM `articles` ORDER BY `date` DESC";
 				$result = $db->Execute($query);
 				$num_rows = $result->NbRows;
-				if(($num_rows%$RESULTS_LIMIT)<>0)
-					$pmax = floor($num_rows / $RESULTS_LIMIT) + 1;
-				else
-					$pmax = floor($num_rows / $RESULTS_LIMIT);
-					
-				
-				$newResult = $db->Execute(($query . " LIMIT " . (($pages - 1) * $RESULTS_LIMIT) . ", ?"), $RESULTS_LIMIT);
-				foreach($newResult as $article)
+				if($num_rows > 0)
 				{
-					$id = $article["id"];
-					$title = $article["title"];
-					$date = $article["date"];
-					$small = $article["small"];
-					$img = $article["img"];
+					if(($num_rows%$RESULTS_LIMIT)<>0)
+						$pmax = floor($num_rows / $RESULTS_LIMIT) + 1;
+					else
+						$pmax = floor($num_rows / $RESULTS_LIMIT);
+						
 					
-					
-					echo '
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="panel panel-default">
-								<div class="panel-body">
-									<div class="page-header">
-										<h3>' . $title . ' <small>Posted on ' . $date . '</small></h3>
+					$newResult = $db->Execute(($query . " LIMIT " . (($pages - 1) * $RESULTS_LIMIT) . ", ?"), $RESULTS_LIMIT);
+					foreach($newResult as $article)
+					{
+						$id = $article["id"];
+						$title = $article["title"];
+						$date = $article["date"];
+						$small = $article["small"];
+						$img = $article["img"];
+						
+						
+						echo '
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="panel panel-default">
+									<div class="panel-body">
+										<div class="page-header">
+											<h3>' . $title . ' <small>Posted on ' . $date . '</small></h3>
+										</div>
+										
+										
+										<p>
+											<img class="featuredImg" src="' . $img . '" width="20%" style="float:left; margin-right: 10px;"/>
+											<p>' . $small . '
+										</p>
+										<a href="article.php?id=' . $id . '" class="btn btn-default pull-right">Read More</a>
 									</div>
 									
-									
-									<p>
-										<img class="featuredImg" src="' . $img . '" width="20%" style="float:left; margin-right: 10px;"/>
-										<p>' . $small . '
-									</p>
-									<a href="article.php?id=' . $id . '" class="btn btn-default pull-right">Read More</a>
 								</div>
-								
 							</div>
-						</div>
-					</div>';
-				}
-				
-				echo '<div class="container">';
-				if($pages > 1)
-					echo '<a class="btn btn-default" href="index.php?page=' . ($pages - 1) . '" title="Previous Page"> << </a>';
-				else
-					echo "";
+						</div>';
+					}
 					
-				$pid = 1;
-				while($pid <= $pmax)
-				{
-					$paging = "<a class='btn btn-default' href='index.php?page=" . $pid . "' title='Page " . $pid . " of " . $pmax . "'>" . $pid . "</a>";
-					echo $paging;
-					$pid ++;
-				}
-				
-				if($pages < $pmax)
-					echo "<a class='btn btn-default' href='index.php?page=" . ($pages+1) . "' title='Next Page'> >> </a>";
-				else
-					echo "";
+					echo '<div class="container">';
+					if($pages > 1)
+						echo '<a class="btn btn-default" href="index.php?page=' . ($pages - 1) . '" title="Previous Page"> << </a>';
+					else
+						echo "";
+						
+					$pid = 1;
+					while($pid <= $pmax)
+					{
+						$paging = "<a class='btn btn-default' href='index.php?page=" . $pid . "' title='Page " . $pid . " of " . $pmax . "'>" . $pid . "</a>";
+						echo $paging;
+						$pid ++;
+					}
 					
-				echo "<a class='btn btn-default' href='index.php?page=" . $pmax . "' title='Last Page'> Last </a>";
-				
-				echo '</div>';
+					if($pages < $pmax)
+						echo "<a class='btn btn-default' href='index.php?page=" . ($pages+1) . "' title='Next Page'> >> </a>";
+					else
+						echo "";
+						
+					echo "<a class='btn btn-default' href='index.php?page=" . $pmax . "' title='Last Page'> Last </a>";
+					
+					echo '</div>';
+				}
 			?>
 				</div>
 				

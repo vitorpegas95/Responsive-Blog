@@ -57,6 +57,7 @@
 								else
 								{
 									$conn = new mysqli($DBhost, $DBuser, $DBpassword);
+									
 									if(strlen($error) == 1)
 									{
 										//Create the Database
@@ -67,8 +68,68 @@
 									
 									$path_to_file = 'config/config.php';
 									$file_contents = file_get_contents($path_to_file);
-									$file_contents = str_replace("DATABASE_NAME", $DBname,$file_contents);
+									$file_contents = str_replace("DATABASE_NAMECHECK", $DBname,$file_contents);
 									file_put_contents($path_to_file,$file_contents);
+									
+									$usersQuery = "CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(26) NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `password` varchar(130) NOT NULL,
+  `rights` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+
+								$configQuery = "CREATE TABLE IF NOT EXISTS `config` (
+  `site_name` varchar(100) NOT NULL DEFAULT 'BsBlog',
+  `site_welcome` varchar(140) NOT NULL DEFAULT 'Welcome to my Bootstrap Blog!',
+  `site_slogan` varchar(500) NOT NULL DEFAULT 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula.',
+  `site_about` text NOT NULL,
+  `results_limit` tinyint(2) NOT NULL DEFAULT '15',
+  `contact_mail` varchar(100) NOT NULL DEFAULT 'mail@mail.com',
+  `facebook` varchar(200) NOT NULL,
+  `twitter` varchar(200) NOT NULL,
+  `google` varchar(200) NOT NULL,
+  `linkedin` varchar(200) NOT NULL,
+  `instagram` varchar(200) NOT NULL,
+  `pinterest` varchar(200) NOT NULL,
+  `tumblr` varchar(200) NOT NULL,
+  `flickr` varchar(200) NOT NULL,
+  `myspace` varchar(200) NOT NULL,
+  `askfm` varchar(200) NOT NULL,
+  PRIMARY KEY (`site_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+									
+									$navbarQuery = "CREATE TABLE IF NOT EXISTS `navbar` (
+  `id` tinyint(2) NOT NULL AUTO_INCREMENT,
+  `label` varchar(50) NOT NULL,
+  `link` text NOT NULL,
+  `dropdown` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;";
+
+									$navbarQuery2 = "INSERT INTO `navbar` (`id`, `label`, `link`, `dropdown`) VALUES
+(1, 'Home', 'index.php', 0),
+(3, 'About', 'about.php', 0);";
+
+									$articlesQuery = "CREATE TABLE IF NOT EXISTS `articles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(140) NOT NULL,
+  `message` text NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `img` text NOT NULL,
+  `small` text NOT NULL,
+  `author` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+									
+									$db->Execute($usersQuery);
+									$db->Execute($configQuery);
+									$db->Execute($navbarQuery);
+									$db->Execute($navbarQuery2);
+									$db->Execute($articlesQuery);
 									
 									echo "<h4>Hurray you made it through!</h4>";
 									echo "<p>The Database is now UP and running. Here is a list (for nerds) of the queries:</p>";
@@ -255,10 +316,10 @@
 									$myspace = $_POST["myspace"];
 									$askfm = $_POST["askfm"];
 									
-									$db->Execute("INSERT INTO 
-									`config`(`site_name`, `site_welcome`, `site_slogan`, `site_about`, `results_limit`, `contact_mail`, `facebook`, `twitter`, `google`, `linkedin`, `instagram`, `pinterest`, `tumblr`, `flickr`, `myspace`, `askfm`) 
-									VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", $site_name, $site_welcome, $site_slogan, $site_about, $results_limit, $contact_email, 
-									$facebook, $twitter, $google, $linkedin, $instagram, $pinterest, $tumblr, $flickr, $myspace, $askfm);
+									$query = "INSERT INTO `config`(`site_name`, `site_welcome`, `site_slogan`, `site_about`, `results_limit`, `contact_mail`, `facebook`, `twitter`, `google`, `linkedin`, `instagram`, `pinterest`, `tumblr`, `flickr`, `myspace`, `askfm`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+									
+									
+									$db->Execute($query, $site_name, $site_welcome, $site_slogan, $site_about, $results_limit, $contact_email, $facebook, $twitter, $google, $linkedin, $instagram, $pinterest, $tumblr, $flickr, $myspace, $askfm);
 									
 									?>
 									
@@ -335,8 +396,9 @@
 									
 									echo "<h3>SUCCESS! Your blog is now ready for you!</h3>";
 									
+									//Delete instal.php
 									$my_file = 'install.php';
-									//unlink($my_file);
+									unlink($my_file);
 									
 									echo "<p>You can now visit your new blog.</p>";
 									echo "<a href='index.php' class='btn btn-success'>Click Here to End the Installation</a>";
